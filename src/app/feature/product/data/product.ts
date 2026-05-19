@@ -18,3 +18,10 @@ export interface ProductsResponse {
   skip: number;
   limit: number;
 }
+
+export const defaultProductsResponse = {
+  products: [],
+  total: 0,
+  skip: 0,
+  limit: 0
+}

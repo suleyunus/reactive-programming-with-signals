@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from "@angular/router";
 import { ToastModule } from "primeng/toast";
 
@@ -8,6 +8,4 @@ import { ToastModule } from "primeng/toast";
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('reactive-programming-with-signals');
-}
+export class App { }

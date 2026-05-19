@@ -1,11 +1,8 @@
 import { Routes } from '@angular/router';
 
-import { ProductClient } from './data/product-client';
-
 export default <Routes>[
   {
     path: '',
-    providers: [ProductClient],
     children: [
       {
         path: '',

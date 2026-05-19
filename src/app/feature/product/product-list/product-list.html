@@ -1,38 +1,40 @@
+@let products = productsResource.value();
+
 <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
   <h2 class="sr-only">Products</h2>
 
-  <ng-container *ngIf="!error">
+  @if (status() === 'error') {
+    <app-error>
+      <span class="action"><button (click)="retry()" pButton>Reload</button></span>
+    </app-error>
+  } @else {
     <p-dataview
       #dv
-      [value]="products"
+      [value]="products?.products"
       [lazy]="true"
-      (onPage)="findProducts($event)"
+      (onPage)="onPage($event)"
       [lazyLoadOnInit]="false"
-      [rows]="limit"
-      [first]="skip"
       [paginator]="true"
-      [totalRecords]="totalProducts"
+      [rows]="limit()"
+      [first]="skip()"
+      [totalRecords]="products?.total"
       [layout]="'grid'"
     >
       <ng-template #grid let-products>
         <div
           class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-3 lg:gap-x-8 mb-8"
         >
-          <ng-container *ngIf="loading; else dataGrid">
-            <ng-container *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8, 9]">
+          @if (status() === 'loading' || status() === 'reloading') {
+            @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9]; track i) {
               <app-product-card-skeleton />
-            </ng-container>
-          </ng-container>
-
-          <ng-template #dataGrid>
-            <app-product-card *ngFor="let product of products" [product]="product" />
-          </ng-template>
+            }
+          } @else if (status() === 'resolved') {
+            @for (product of products; track product.id) {
+               <app-product-card [product]="product" />
+            }
+          }
         </div>
       </ng-template>
     </p-dataview>
-  </ng-container>
-
-  <app-error *ngIf="error">
-    <span class="action"><button (click)="retry()" pButton>Reload</button></span>
-  </app-error>
+  }
 </div>
