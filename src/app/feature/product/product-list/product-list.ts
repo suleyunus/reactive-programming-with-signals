@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit } from '@angular/core';
 import { DataViewModule, DataViewPageEvent } from 'primeng/dataview';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageModule } from 'primeng/message';
@@ -10,6 +10,7 @@ import { MessageService } from 'primeng/api';
 import { ProductCardSkeleton } from "../ui/product-card-skeleton/product-card-skeleton";
 import { ButtonModule } from 'primeng/button';
 import { Error } from "../../shared-ui/error/error";
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -35,7 +36,7 @@ export class ProductList implements OnInit {
   limit = 30
   totalProducts = 0;
 
-  constructor(private readonly productService: ProductService, private readonly messageService: MessageService) { }
+  constructor(private readonly destroyRef: DestroyRef, private readonly productService: ProductService, private readonly messageService: MessageService) { }
 
   ngOnInit() {
     this.findProducts({ first: this.skip, rows: this.limit })
@@ -48,6 +49,7 @@ export class ProductList implements OnInit {
     this.loading = true;
 
     this.productService.findProducts({ skip: this.skip, limit: this.limit })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           this.products = response.products;
