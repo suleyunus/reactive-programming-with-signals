@@ -1,6 +1,6 @@
-import { httpResource } from '@angular/common/http';
-import { Injectable, Signal } from '@angular/core';
-import { defaultProductsResponse, ProductsResponse } from './product';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { ProductsResponse } from './product';
 
 @Injectable({
   providedIn: 'root',
@@ -8,17 +8,9 @@ import { defaultProductsResponse, ProductsResponse } from './product';
 export class ProductService {
   private readonly baseUrl = `https://dummyjson.com`;
 
-  findProducts({ skip, limit }: { skip: Signal<number>, limit: Signal<number> }) {
-    return httpResource<ProductsResponse>(() => ({
-      url: `${this.baseUrl}/products`,
-      params: {
-        limit: limit(),
-        skip: skip(),
-      }
-    }),
-      {
-        defaultValue: defaultProductsResponse,
-      }
-    )
+  constructor(private readonly http: HttpClient) { }
+
+  findProducts({ skip = 0, limit = 30 }: { skip?: number, limit?: number } = {}) {
+    return this.http.get<ProductsResponse>(`${this.baseUrl}/products?limit=${limit}&skip=${skip}`)
   }
 }
