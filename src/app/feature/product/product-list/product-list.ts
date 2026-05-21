@@ -29,13 +29,12 @@ export class ProductList {
   protected readonly skip = signal(0)
   protected readonly limit = signal(30)
   protected readonly productsResource = this.productService.findProducts({ skip: this.skip, limit: this.limit })
-  protected readonly status = this.productsResource.status
+  protected readonly isLoading = this.productsResource.isLoading
+  protected readonly error = this.productsResource.error
 
   constructor() {
     effect(() => {
-      const status = this.status()
-
-      if (status === 'error') {
+      if (this.error()) {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'There was an error fetching products' });
       }
     })

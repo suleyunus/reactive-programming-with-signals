@@ -3,7 +3,7 @@
 <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
   <h2 class="sr-only">Products</h2>
 
-  @if (status() === 'error') {
+  @if (error()) {
     <app-error>
       <span class="action"><button (click)="retry()" pButton>Reload</button></span>
     </app-error>
@@ -24,11 +24,11 @@
         <div
           class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-3 lg:gap-x-8 mb-8"
         >
-          @if (status() === 'loading' || status() === 'reloading') {
+          @if (isLoading()) {
             @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9]; track i) {
               <app-product-card-skeleton />
             }
-          } @else if (status() === 'resolved') {
+          } @else {
             @for (product of products; track product.id) {
                <app-product-card [product]="product" />
             }
