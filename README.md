@@ -1,59 +1,109 @@
-# ReactiveProgrammingWithSignals
+# You Don't Need an ngOnInit: Reactive Programming With Signals
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.10.
+Source code for the **Angular Kenya** online Thursday webinar: *You Don't Need an ngOnInit: Reactive Programming With Signals*.
 
-## Development server
+**[Watch the webinar recording on YouTube](https://www.youtube.com/live/8k9o4T4sn9k)** · **[View the slides (Google Slides)](https://docs.google.com/presentation/d/1ciA354H0gydgcQwMdrNy-AB-OmLzqDiHAuv56Igahk8/edit?usp=sharing)**
 
-To start a local development server, run:
+The demo is a paginated product catalog backed by the [DummyJSON](https://dummyjson.com) API. Each branch implements the same UI with a different approach to loading data, so you can compare imperative lifecycle hooks, zoneless pitfalls, signal-based resources, and a classic RxJS pipeline side by side.
 
-```bash
-ng serve
+## What you'll learn
+
+- How imperative state (`loading`, `error`, manual `subscribe`) compares to declarative data flow
+- Think in visual states and relationships
+- How `httpResource` and signals express loading, success, and error without lifecycle hooks
+- How the same feature looks with RxJS streams (still without `ngOnInit`)
+
+## Branches
+
+`main` is a minimal Angular CLI scaffold. The full webinar demo lives on the feature branches—check out the branch you want to explore, then run the app.
+
+| Branch | Description |
+|--------|-------------|
+| [`main`](https://github.com/suleyunus/reactive-programming-with-signals/tree/main) | Starter project (no product feature yet) |
+| [`with-ngoninit`](https://github.com/suleyunus/reactive-programming-with-signals/tree/with-ngoninit) | Imperative approach: mutable fields, manual `subscribe`, and `ngOnInit` to load the first page |
+| [`with-ngoninit-no-zones`](https://github.com/suleyunus/reactive-programming-with-signals/tree/with-ngoninit-no-zones) | Same as `with-ngoninit`, but **zoneless** (`provideZoneChangeDetection` removed)—the request still completes, but the view does not update |
+| [`reactive`](https://github.com/suleyunus/reactive-programming-with-signals/tree/reactive) | Declarative approach: `httpResource`, signals for pagination, `OnPush`, no `ngOnInit` |
+| [`reactive-rxjs`](https://github.com/suleyunus/reactive-programming-with-signals/tree/reactive-rxjs) | RxJS alternative: `combineLatest`, `switchMap`, and `AsyncPipe`—same idea, no lifecycle hook for initialization |
+
+### Quick comparison
+
+```text
+with-ngoninit          →  ngOnInit() → subscribe() → assign fields
+with-ngoninit-no-zones →  same code, zoneless → UI doesn't refresh showing pitfalls of non-reactive code
+reactive               →  signals + httpResource → template reads resource state
+reactive-rxjs          →  observables + async pipe → vm$ drives the template
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Where to look in the code
 
-## Code scaffolding
+On the feature branches, the main teaching material is under:
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- `src/app/feature/product/product-list/product-list.ts` — list component (differs per branch)
+- `src/app/feature/product/data/product-service.ts` — HTTP layer (`HttpClient` vs `httpResource`)
 
-```bash
-ng generate component component-name
-```
+## Getting started
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+**Requirements:** Node.js 20+, npm 11+
 
 ```bash
-ng build
+git clone https://github.com/suleyunus/reactive-programming-with-signals.git
+cd reactive-programming-with-signals
+
+# Pick a branch (example: signal-based reactive version)
+git checkout reactive
+
+npm install
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Open [http://localhost:4200](http://localhost:4200). The app redirects to `/product`, which shows the paginated product grid.
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+### Try the zoneless failure
 
 ```bash
-ng test
+git checkout with-ngoninit-no-zones
+npm start
 ```
 
-## Running end-to-end tests
+Load products and paginate. Network calls succeed, but without Zone.js–driven change detection the template may not reflect new data until something else triggers updates—this is intentional for the webinar discussion.
 
-For end-to-end (e2e) testing, run:
+## Tech stack
 
-```bash
-ng e2e
+- [Angular](https://angular.dev) 21 (standalone components, signals, `httpResource`)
+- [PrimeNG](https://primeng.org) + Aura theme (DataView, toasts, skeletons)
+- [Tailwind CSS](https://tailwindcss.com) 4
+- [DummyJSON](https://dummyjson.com/docs/products) products API
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm start` | Dev server (`ng serve`) |
+| `npm run build` | Production build |
+| `npm test` | Unit tests (Vitest via Angular CLI) |
+
+## Project structure (feature branches)
+
+```text
+src/app/
+├── app.config.ts          # App providers (zone vs zoneless differs by branch)
+├── app.routes.ts          # Routes → lazy-loaded product feature
+└── feature/
+    ├── product/
+    │   ├── data/          # Models + ProductService
+    │   ├── product-list/  # Main demo component
+    │   └── ui/            # Product card + skeleton
+    └── shared-ui/error/   # Shared error presentation
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Additional resources
 
-## Additional Resources
+- [Webinar recording (YouTube)](https://www.youtube.com/live/8k9o4T4sn9k)
+- [Slides: Angular Kenya — You Don't need an ngOnInit (Google Slides)](https://docs.google.com/presentation/d/1ciA354H0gydgcQwMdrNy-AB-OmLzqDiHAuv56Igahk8/edit?usp=sharing)
+- [Angular signals guide](https://angular.dev/guide/signals)
+- [Angular httpResource](https://angular.dev/guide/http/http-resource)
+- [Angular zoneless change detection](https://angular.dev/guide/zoneless)
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## License
+
+This repository is provided as webinar companion code. Use and adapt it for learning and talks; attribute Angular Kenya and the repo when sharing publicly.
